@@ -1,0 +1,57 @@
+# Settings to tell the bot to which accounts to connect
+# and also from which accounts it receives instructions.
+
+[xmpp.settings]
+reconnect_timeout = 3
+
+[[xmpp.operators]]
+name = ""
+jid = ""
+
+[xmpp.proxy.socks5]
+host = "127.0.0.1"
+port = 9050
+#username = ""
+#password = ""
+
+[xmpp.profile]
+FN = "KaikOut"
+NICKNAME = "KaikOut"
+ROLE = "KaikOut Moderation Chat Bot"
+ORG = "KaikOut Inc."
+URL = "https://xmpp-it.net/sch/KaikOut"
+NOTE = "A moderation chat bot made for XMPP."
+BDAY = "20 June 2024"
+#TITLE = ""
+#DESC = ""
+
+[xmpp.client]
+alias = "KaikOut"
+jid = "/KaikOut"
+password = ""
+
+[tox]
+username = ""
+password = ""
+operator = ""
+
+[session]
+username = ""
+password = ""
+operator = ""
+
+[irc]
+username = ""
+password = ""
+#port = 6667
+operator =  ""
+
+[deltachat]
+username = ""
+password = ""
+operator =  ""
+
+[cabal]
+username = ""
+password = ""
+operator =  ""

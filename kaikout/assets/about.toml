@@ -1,0 +1,327 @@
+[[about]]
+title = "About"
+subtitle = "KaikOut"
+
+[[about]]
+name = "KaikOut"
+desc = "XMPP moderation bot. Spam has never been in fashion."
+info = ["""
+KaikOut is an XMPP bot that suprvises group chat activity and \
+assists in blocking and preventing of unsolicited type of messages.
+
+KaikOut is a portmanteau of Kaiko and Out.
+Kaiko (懐古) translates from Japanese to "Old-Fashioned".
+
+KaikOut is designed primarily for the XMPP communication network \
+(aka Jabber). Visit https://xmpp.org/software/ for more information.
+
+You can run your own KaikOut instance as a client, from your own \
+computer, server, and even from a Linux phone (i.e. Droidian, \
+Kupfer, Mobian, NixOS, postmarketOS), as well as from Termux.
+
+All you need is one of the above and an XMPP account to connect \
+KaikOut with.
+
+Good luck!
+"""]
+
+platforms = "XMPP"
+# platforms = "ActivityPub, Briar, DeltaChat, Email, IRC, LXMF, MQTT, Nostr, Session, Tox."
+comment = "For an ideal experience, we recommend of using XMPP."
+url = "https://git.xmpp-it.net/sch/Kaikout"
+
+[[about]]
+name = "slixmpp"
+desc = "XMPP library"
+info = ["""
+Slixmpp is an MIT licensed XMPP library for Python 3.7+. It is a fork of \
+SleekXMPP.
+
+Slixmpp's goals is to only rewrite the core of the SleekXMPP library \
+(the low level socket handling, the timers, the events dispatching) \
+in order to remove all threads.
+"""]
+url = "https://codeberg.org/poezio/slixmpp"
+
+[[about]]
+name = "SleekXMPP"
+desc = "XMPP library"
+info = ["""
+SleekXMPP is an MIT licensed XMPP library for Python 2.6/3.1+, and is \
+featured in examples in the book XMPP: The Definitive Guide by Kevin Smith, \
+Remko Tronçon, and Peter Saint-Andre.
+"""]
+url = "https://codeberg.org/fritzy/SleekXMPP"
+
+[[about]]
+name = "XMPP"
+desc = "Messaging protocol (also known as Jabber)"
+info = ["""
+XMPP is the Extensible Messaging and Presence Protocol, a set of open \
+technologies for instant messaging, presence, multi-party chat, voice and \
+video calls, collaboration, lightweight middleware, content syndication, \
+and generalized routing of XML data.
+
+XMPP was originally developed in the Jabber open-source community to \
+provide an open, decentralized alternative to the closed instant messaging \
+services at that time.
+"""]
+url = "https://xmpp.org/about"
+
+[[authors]]
+title = "Authors"
+subtitle = "The people who have made KaikOut"
+
+[[authors]]
+name = "Schimon Zackary"
+role = "Author and Creator"
+info = ["""
+A middle eastern cowboy, farmer, pianist and lawyer who engages in criminal \
+and corporate law, and who took a decision to make a moderation bot for XMPP, \
+after he was informed that several spy agencies attempt to discredit the XMPP \
+network, albeit they make an extensive use of XMPP themselves.
+"""]
+url = "http://schimon.i2p"
+
+[[legal]]
+title = "Legal"
+subtitle = "Legal Notice"
+
+[[legal]]
+info = ["""
+Kaikout is free software; you can redistribute it and/or modify it under the \
+terms of the AGPL License version 3.
+
+Kaikout is distributed in the hope that it will be useful, but WITHOUT ANY \
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR \
+A PARTICULAR PURPOSE.  See the AGPL License (version 3) for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""]
+link = "https://git.xmpp-it.net/sch/Kaikout"
+
+[[license]]
+title = "License"
+subtitle = "AGPL-3.0-only"
+
+[[license]]
+info = ["""
+KaikOut moderation chat bot for the XMPP communication network.
+Copyright (C) 2024  Schimon Zachary
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License version 3 as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""]
+owner = "Schimon Zachary"
+
+[[support]]
+title = "Support"
+subtitle = "Kaikout Support Groupchat"
+
+[[support]]
+jid = "xmpp:kaikout@chat.woodpeckersnest.space?join"
+lang = "de, en, fr, ja, nl"
+
+[[operators]]
+title = "Operators"
+subtitle = "Kaikout Operators"
+
+[[operators]]
+name = "Mr. Operator"
+info = "No operator was specified for this instance."
+
+[[policies]]
+title = "Policies"
+subtitle = "Terms of service"
+
+[[policies]]
+name = "Terms and Conditions"
+info = ["""
+Abusers will be baptized.
+"""]
+
+[[policies]]
+name = "Privacy Policy"
+info = ["""
+1. KaikOut logs public message activity, including status messages and aliases;
+2. KaikOut logs private activities of moderators, including Jabber ID;
+3. KaikOut reports moderators private activities to respective groupchat owners;
+4. KaikOut does not log Jabber ID addresses, excluding Jabber ID addresses of \
+banned and outcasted Jabber IDs.
+"""]
+
+[[clients]]
+title = "Clients"
+subtitle = """
+As a chat bot, Kaikout works with any XMPP messenger, yet we have deemed it \
+appropriate to list the software that work best with Kaikout, namely those \
+that provide support for XEP-0050: Ad-Hoc Commands.
+"""
+
+[[clients]]
+name = "Cheogram"
+desc = "XMPP client for mobile"
+info = ["""
+The Cheogram Android app allows you to join a worldwide communication network. \
+It especially focuses on features useful to users who want to contact those on \
+other networks as well, such as SMS-enabled phone numbers.
+"""]
+url = "https://cheogram.com"
+platform = "Android"
+
+# [[clients]]
+# name = "Conversations"
+# info = "XMPP client for mobile"
+# url = "https://conversations.im"
+
+[[clients]]
+name = "Converse"
+desc = "XMPP client for desktop and mobile"
+info = ["""
+Converse is a free and open-source XMPP chat client that runs in an HTML \
+browser or on your desktop.
+"""]
+url = "https://conversejs.org"
+platform = "HTML"
+
+[[clients]]
+name = "Gajim"
+info = "XMPP client for desktop"
+url = "https://gajim.org"
+
+# [[clients]]
+# name = "Monal IM"
+# info = "XMPP client for desktop and mobile"
+# url = "https://monal-im.org"
+
+[[clients]]
+name = "monocles chat"
+desc = "XMPP client for mobile"
+info = """
+monocles chat is a modern and secure Android XMPP chat client. Based on \
+blabber.im and Conversations with a lot of changes and additional features \
+to improve usability and security.
+"""
+url = "https://monocles.chat"
+platform = "Android"
+
+[[clients]]
+name = "Movim"
+desc = "XMPP client for desktop and mobile"
+info = ["""
+Movim is a social and chat platform that acts as a frontend for the XMPP network.
+
+Once deployed Movim offers a complete social and chat experience for the \
+decentralized XMPP network users. It can easily connect to several XMPP \
+servers at the same time.
+
+With a simple configuration it can also be restricted to one XMPP server \
+and will then act as a powerful frontend for it. Movim is fully compatible \
+with the most used XMPP servers such as ejabberd or Prosody.
+"""]
+url = "https://mov.im"
+platform = "HTML"
+
+# [[clients]]
+# name = "Moxxy"
+# info = "XMPP client for mobile"
+# url = "https://moxxy.org"
+
+[[clients]]
+name = "Poezio"
+desc = "XMPP client for console"
+info = ["""
+Poezio is a free console XMPP client (the protocol on which the Jabber IM \
+network is built).
+
+Its goal is to let you connect very easily (no account creation needed) to \
+the network and join various chatrooms, immediately. It tries to look like \
+the most famous IRC clients (weechat, irssi, etc). Many commands are identical \
+and you won't be lost if you already know these clients. Configuration can be \
+made in a configuration file or directly from the client.
+"""]
+url = "https://poez.io"
+platform = "FreeBSD and Linux"
+
+[[clients]]
+name = "Psi"
+desc = "XMPP client for desktop"
+info = ["""
+Instant messaging as free and open as it should be.
+
+Psi is a free instant messaging application designed for the XMPP network. \
+Fast and lightweight, Psi is fully open-source and compatible with Windows, \
+Linux, and macOS.
+
+With Psi's full Unicode support and localizations, easy file transfers, \
+customizable iconsets, and many other great features, you'll learn why users \
+around the world are making the switch to free, open instant messaging.
+"""]
+url = "https://psi-im.org"
+platform = "Any"
+
+[[clients]]
+name = "Psi+"
+desc = "XMPP client for desktop"
+info = ["""
+In 2009 a Psi fork named Psi+ was started. Project purpose are: implementation \
+of new features, writing of patches and plugins for transferring them to upstream. \
+As of 2017 the most of active Psi+ developers have become official Psi developers, \
+but Psi+ still has a number of unique features. From developers point of view Psi+ \
+is just a development branch of Psi IM client which is hosted at separate git \
+repositories and for which rolling release development model is used.
+"""]
+url = "https://psi-plus.com"
+platform = "Any"
+
+# [[clients]]
+# name = "Swift"
+# info = "XMPP client for desktop"
+# url = "https://swift.im"
+
+# [[clients]]
+# name = "yaxim"
+# info = "XMPP client for mobile"
+# url = "https://yaxim.org"
+
+[[resources]]
+title = "Useful Resources"
+subtitle = "Technologies which Kaikout is based upon"
+
+[[resources]]
+name = "Slixmpp"
+info = "XMPP library"
+desc = """
+Slixmpp is an MIT licensed XMPP library for Python 3.7+. It is a fork of \
+SleekXMPP.
+
+Slixmpp's goals is to only rewrite the core of the SleekXMPP library \
+(the low level socket handling, the timers, the events dispatching) \
+in order to remove all threads.
+"""
+url = "https://slixmpp.readthedocs.io"
+
+[[resources]]
+name = "XMPP"
+info = "Messaging protocol (also known as Jabber)"
+desc = """
+XMPP is the Extensible Messaging and Presence Protocol, a set of open \
+technologies for instant messaging, presence, multi-party chat, voice and \
+video calls, collaboration, lightweight middleware, content syndication, \
+and generalized routing of XML data.
+
+XMPP was originally developed in the Jabber open-source community to \
+provide an open, decentralized alternative to the closed instant messaging \
+services at that time.
+"""
+url = "https://xmpp.org/about"

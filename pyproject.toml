@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kaikout"
+version = "0.1"
+description = "Kaiko (Japanese: 懐古) Out is a group chat moderation chat bot"
+authors = [{name = "Schimon Zachary", email = "sch@fedora.email"}]
+license = {text = "AGPL-3.0-only"}
+classifiers = [
+    "Framework :: slixmpp",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Communications :: Chat",
+    "Topic :: Internet :: Extensible Messaging and Presence Protocol (XMPP)",
+    "Topic :: Internet :: Instant Messaging",
+    "Topic :: Internet :: XMPP",
+]
+keywords = [
+    "bot",
+    "chat",
+    "im",
+    "jabber",
+    "spam",
+    "xmpp",
+]
+# urls = {Homepage = "https://git.xmpp-it.net/sch/kaikout"}
+dependencies = [
+    "tomli", # Python 3.10
+    "tomli_w",
+    "slixmpp",
+]
+
+[project.urls]
+Homepage = "http://kaikout.i2p/"
+Repository = "https://git.xmpp-it.net/sch/kaikout"
+Issues = "https://codeberg.org/sch/kaikout/issues"
+
+# [project.readme]
+# text = "kaikout is a moderation chat bot"
+
+[project.scripts]
+kaikout = "kaikout.__main__:main"
+
+[tool.setuptools]
+platforms = ["any"]
+
+[tool.setuptools.package-data]
+"*" = ["*.toml", "*.png"]

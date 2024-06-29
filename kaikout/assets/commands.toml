@@ -1,0 +1,174 @@
+[all]
+all = """
+all
+Show all options.
+"""
+
+[bookmarks]
+bookmark = """
+bookmark [+|-] <muc>
+Groupchat to add or remove.
+'+' appends to, '-' removes from.
+"""
+bookmarks = """
+bookmarks
+List bookmarked groupchats.
+"""
+
+[filters]
+allow = """
+allow [+|-] <keyword>
+Keywords to allow
+comma-separated keywords
+'+' appends to, '-' removes from.
+"""
+deny = """
+deny [+|-] <keyword>
+Keywords to block
+comma-separated keywords
+'+' appends to, '-' removes from.
+"""
+clear = """
+clear allow/deny
+Clear allow or deny list.
+"""
+reset = """
+Reset allow/deny
+Reset allow or deny list.
+"""
+
+[groupchat]
+uri = """
+<muc>
+Join groupchat by given <muc> (prefix xmpp).
+"""
+join = """
+join <muc>
+Join groupchat by given <muc>.
+"""
+leave = """
+goodbye
+Leave groupchat and delete it from bookmarks.
+"""
+
+[manual]
+all = """
+help all
+Print a complete list of commands.
+"""
+help = """
+help
+Print list of command types.
+"""
+command = """
+help key command
+Print command usage and description.
+"""
+info = """
+info
+Print information page.
+"""
+key = """
+help <key>
+Print list of commands for selected command type.
+"""
+
+[options]
+action = """
+action <boolean>
+Set action. 1 for ban, 0 for devoice.
+"""
+count = """
+count <number>
+Number of maximum allowed words to repeat per message.
+"""
+default = """
+default <key>
+Restore a setting to its default value.
+"""
+defaults = """
+defaults
+Restore all settings to default value.
+"""
+finished = """
+finished [off|on]
+Display a consequent message with the amount of a done task time.
+"""
+frequency_messages = """
+frequency messages <number>
+Minimum allowed frequency for sending consequent messages.
+"""
+frequency_presence = """
+frequency presence <number>
+Minimum allowed frequency for sending consequent status messages.
+"""
+inactivity = """
+inactivity [off|on]
+Check for inactivity.
+"""
+inactivity_span = """
+inactivity span <number>
+The maximum allowed time (in days) of inactivity.
+"""
+inactivity_warn = """
+inactivity warn <number>
+The time (in minutes) of inactivity to send a warning upon before action. Value can not be higher than of inactivity_span.
+"""
+kick = """
+kick <alias>
+Kick a participant by specified alias.
+"""
+message = """
+message [off|on]
+Check messages for faults.
+"""
+options = """
+options
+List options.
+"""
+score_messages = """
+score messages <number>
+Number of maximum allowed message faults before committing an action.
+"""
+score_presence = """
+score presence <number>
+Number of maximum allowed presence faults before committing an action.
+"""
+scores = """
+scores <jid>
+Display scores of specified Jabber ID.
+"""
+scores_reset = """
+scores reset <jid>
+Reset scores of specified Jabber ID.
+"""
+start = """
+start
+Enable bot and send updates.
+"""
+status = """
+status [off|on]
+Check status messages for faults.
+"""
+stop = """
+stop
+Disable bot and stop updates.
+"""
+timer = """
+timer <number>
+Timer value (in seconds) for countdown before committing an action.
+"""
+
+[statistics]
+score = """
+scores <jid>
+Display scores for a given Jabber ID.
+"""
+reset = """
+scores reset <jid>
+Reset scores of a given Jabber ID.
+"""
+stats = """
+stats
+Show general statistics.
+"""

@@ -1,0 +1,76 @@
+# This file lists default settings per database.
+# See file /usr/share/kaikout/settings.toml
+
+[defaults]
+action = 0               # 1 to ban, or 0 to devioce.
+check_inactivity = 0     # Enable inactivity detection.
+check_message = 1        # Enable detection of message abuse.
+check_status = 1         # Enable detection of status message abuse.
+count = 9                # The maximum allowed number of instances of a word or a phrase in a message.
+enabled = 1              # Work status (Value 0 to disable).
+finished = 0             # Send an extra message which indicates of the amount of time of a done task (Value 1 to enable).
+frequency_messages = 1   # The maximum allowed frequency (in seconds) of sent messages.
+frequency_presence = 180 # The maximum allowed frequency (in seconds) of changed status messages.
+inactivity_span = 30     # The maximum allowed time (in days) of inactivity.
+inactivity_warn = 300    # The time (in minutes) of inactivity to send a warning upon before action. Value can not be higher than of inactivity_span.
+score_messages = 3       # The maximum allowed number of message faults to act upon.
+score_presence = 10      # The maximum allowed number of presence faults to act upon.
+timer = 180              # Timer value (in seconds) for countdown before committing an action.
+allow = [
+  "jesus saves",
+  "oracle broadcasting radio",
+  "real liberty media",
+  "woop ass"
+]
+deny = [
+  "666",
+  "arse",
+  "arsehead",
+  "arsehole",
+  "ass hole",
+  "asshole",
+  "bollocks",
+  "bugger",
+  "christ on a bike",
+  "christ on a cracker",
+  "cock sucker",
+  "cocksucker",
+  "damm it",
+  "damn it",
+  "dammit",
+  "damnit",
+  "dick head",
+  "dickhead",
+  "dumb ass",
+  "dumbass",
+  "frigger",
+  "fuck you",
+  "fucker",
+  "fucking",
+  "god damn",
+  "god damnit",
+  "god damm",
+  "god dammit",
+  "goddammed",
+  "goddammit",
+  "goddamn",
+  "goddamned",
+  "goddamnit",
+  "holy shit",
+  "holyshit",
+  "horseshit",
+  "in shit",
+  "jack-ass",
+  "jackarse",
+  "jackass",
+  "jesus fuck",
+  "jesus wept",
+  "nigga",
+  "shite",
+  "son of a bitch",
+  "son of a whore",
+  "wanker"
+]
+
+[ipc]
+bsd = 0 # IPC (BSD/UDS) POSIX sockets
