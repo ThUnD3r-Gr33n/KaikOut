@@ -96,7 +96,7 @@ fits best to you.
 [[friends]]
 name = "sid an xmpp bot"
 info = ["""
-The ultimate XMPP bot! Some of its features include
+A moderation, syndication and issue tracker bot.
 
 RTBL
 Real Time Block List which would download a hash list of blacklisted JIDs, and \

@@ -40,12 +40,12 @@ def main():
     logging.basicConfig(level=args.loglevel,
                         format='%(levelname)-8s %(message)s')
 
-    if args.jid is None:
-        args.jid = input("Username: ")
-    if args.password is None:
-        args.password = getpass("Password: ")
-
     account_xmpp = Config.get_values('accounts.toml', 'xmpp')
+
+    if args.jid is None and not account_xmpp['client']['jid']:
+        args.jid = input("Username: ")
+    if args.password is None and not account_xmpp['client']['password']:
+        args.password = getpass("Password: ")
 
     # Try configuration file
     if 'client' in account_xmpp:
