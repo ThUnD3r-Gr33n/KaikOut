@@ -2,6 +2,6 @@
 # See file /usr/share/kaikout/rtbl.toml
 
 [[sources]]
-description = "A general block list focussing on spam and service abuse."
+description = "A general block list focusing on spam and service abuse."
 jabber_id = "xmppbl.org"
 node_id = "muc_bans_sha256"

@@ -419,10 +419,35 @@ class XmppClient(slixmpp.ClientXMPP):
                             noticed_jids = self.settings[room]['inactivity_notice']
                             if result == 'Inactivity':
                                 if jid_bare in noticed_jids: noticed_jids.remove(jid_bare)
-                                await XmppCommands.kick(self, room, alias, reason)
-                                message_to_participant = (
-                                    'You were expelled from groupchat {} due to '
-                                    'being inactive for {} days.'.format(room, span))
+                                # FIXME Counting and creating of key entry "score_inactivity" appear not to occur.
+                                score_inactivity = XmppCommands.raise_score_inactivity(self, room, jid_bare, db_file)
+                                if score_inactivity > 10:
+                                    jid_bare = await XmppCommands.outcast(self, room, alias, reason)
+                                    # admins = await XmppMuc.get_affiliation_list(self, room, 'admin')
+                                    # owners = await XmppMuc.get_affiliation_list(self, room, 'owner')
+                                    moderators = await XmppMuc.get_role_list(
+                                        self, room, 'moderator')
+                                    # Report to the moderators.
+                                    message_to_moderators = (
+                                        'Participant {} ({}) has been banned from '
+                                        'groupchat {} due to being inactive for over {} times.'.format(
+                                            alias, jid_bare, room, score_inactivity))
+                                    for alias in moderators:
+                                        # jid_full = presence['muc']['jid']
+                                        jid_full = XmppMuc.get_full_jid(self, room, alias)
+                                        XmppMessage.send(self, jid_full, message_to_moderators, 'chat')
+                                    # Inform the subject.
+                                    message_to_participant = (
+                                        'You were banned from groupchat {} due to being '
+                                        'inactive for over {} times.  Please contact the '
+                                        ' moderators if you think this was a mistake'
+                                        .format(room, score_inactivity))
+                                else:
+                                    await XmppCommands.kick(self, room, alias, reason)
+                                    message_to_participant = (
+                                        'You were expelled from groupchat {} due to '
+                                        'being inactive for over {} days.'.format(room, span))
+                                XmppCommands.remove_last_activity(self, room, jid_bare, db_file)
                             elif result == 'Warning' and jid_bare not in noticed_jids:
                                 noticed_jids.append(jid_bare)
                                 time_left = int(span)

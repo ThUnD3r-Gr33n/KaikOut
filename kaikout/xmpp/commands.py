@@ -410,6 +410,66 @@ class XmppCommands:
         Toml.update_jid_settings(self, room, db_file, 'last_activity', activity)
 
 
+    def remove_last_activity(self, room, jid_bare, db_file):
+        """
+        Remove last message activity.
+
+        Parameters
+        ----------
+        room : str
+            Jabber ID.
+        db_file : str
+            Database filename.
+        jid_bare : str
+            Jabber ID.
+
+        Returns
+        -------
+        result.
+
+        """
+        activity = self.settings[room]['last_activity'] if 'last_activity' in self.settings[room] else {}
+        del activity[jid_bare]
+        Toml.update_jid_settings(self, room, db_file, 'last_activity', activity)
+
+
+    def raise_score_inactivity(self, room, alias, db_file):
+        """
+        Raise score by one.
+
+        Parameters
+        ----------
+        room : str
+            Jabber ID.
+        alias : str
+            Alias.
+        db_file : str
+            Database filename.
+
+        Returns
+        -------
+        result.
+
+        """
+        status_message = '✒️ Writing a score against {} for {}'.format(alias, 'inactivity')
+        self.action_count += 1
+        task_number = self.action_count
+        if room not in self.actions: self.actions[room] = {}
+        self.actions[room][task_number] = status_message
+        XmppStatus.send_status_message(self, room)
+        scores_inactivity = self.settings[room]['scores_inactivity'] if 'scores_inactivity' in self.settings[room] else {}
+        jid_full = XmppMuc.get_full_jid(self, room, alias)
+        if jid_full:
+            jid_bare = jid_full.split('/')[0]
+            scores_inactivity[jid_bare] = scores_inactivity[jid_bare] + 1 if jid_bare in scores_inactivity else 1
+            Toml.update_jid_settings(self, room, db_file, 'scores_inactivity', scores_inactivity)
+        time.sleep(5)
+        del self.actions[room][task_number]
+        XmppStatus.send_status_message(self, room)
+        result = scores_inactivity[jid_bare] if jid_full and jid_bare else 0
+        return result
+
+
     async def restore_default(self, room, db_file, key=None):
         if key:
             value = self.defaults[key]
