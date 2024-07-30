@@ -23,11 +23,24 @@ logger = Logger(__name__)
 
 
 class XmppMuc:
+    
+    
+    def get_affiliation(self, room, alias):
+        """Get an affiliation of a specified alias"""
+        affiliation = self.plugin['xep_0045'].get_jid_property(room, alias, 'affiliation')
+        return affiliation
 
 
-    async def get_affiliation(self, room, affiliation):
-        jids = await self.plugin['xep_0045'].get_affiliation_list(room, affiliation)
-        return jids
+    async def get_affiliation_list(self, room, affiliation):
+        """Get an affiliation list from groupchat config"""
+        try:
+            jids = await self.plugin['xep_0045'].get_affiliation_list(room, affiliation)
+            return jids
+        except Exception as e:
+            logger.error('KaikOut has failed to query the server for a list '
+                         'of Jabber IDs with the affiliation "{}" for '
+                         'groupchat {}'.format(affiliation, room))
+            logger.error(e)
 
 
     def get_alias(self, room, jid):
@@ -51,11 +64,24 @@ class XmppMuc:
     def get_joined_rooms(self):
         rooms = self.plugin['xep_0045'].get_joined_rooms()
         return rooms
+    
+    
+    def get_role(self, room, alias):
+        """Get a role of a specified alias"""
+        role = self.plugin['xep_0045'].get_jid_property(room, alias, 'role')
+        return role
 
 
-    async def get_role(self, room, role):
-        jids = await self.plugin['xep_0045'].get_roles_list(room, role)
-        return jids
+    async def get_role_list(self, room, role):
+        """Get a role list from groupchat config"""
+        try:
+            jids = await self.plugin['xep_0045'].get_roles_list(room, role)
+            return jids
+        except Exception as e:
+            logger.error('KaikOut has failed to query the server for a list '
+                         'of Jabber IDs with the role "{}" for groupchat {}'
+                         .format(role, room))
+            logger.error(e)
 
 
     def get_roster(self, room):

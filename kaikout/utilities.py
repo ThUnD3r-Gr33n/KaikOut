@@ -6,7 +6,7 @@ from email.utils import parseaddr
 import hashlib
 from kaikout.database import Toml
 from kaikout.log import Logger
-import kaikout.sqlite as sqlite
+#import kaikout.sqlite as sqlite
 import os
 import sys
 import tomli_w

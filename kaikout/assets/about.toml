@@ -83,6 +83,63 @@ network, albeit they make an extensive use of XMPP themselves.
 """]
 url = "http://schimon.i2p"
 
+[[friends]]
+title = "Similar Projects"
+subtitle = """
+From Austria to Japan. Moderation bots made by our counterparts. \
+It is obvious that KaikOut may not be as useful as other moderation bots, as \
+each project is formed namely by peculiar design and political principles. \
+You are encouraged to review the following projects and pick the one that \
+fits best to you.
+"""
+
+[[friends]]
+name = "sid an xmpp bot"
+info = ["""
+The ultimate XMPP bot! Some of its features include
+
+RTBL
+Real Time Block List which would download a hash list of blacklisted JIDs, and \
+block them upon join into groupchat.
+
+Feeds
+Publish news from various Debian feeds (security, planet, package tracker).
+It can easily be used for other feeds (Atom and RSS).
+
+Debian Archive
+Fetch debian packages info from the debian archive
+
+Debian Bugs
+Intercept debian bugs numbers in MUC messages and send info about it
+"""]
+interface = "Groupchat"
+url = "https://kaliko.gitlab.io/sid/index.html"
+
+[[friends]]
+name = "her.st bot"
+info = ["""
+The ultimate XMPP bot! Some of its features include
+
+Anti Spam
+Social Credit Score
+Distributed Moderation
+Url Rewriter for Privacy Frontends
+Url Title Extractor
+Url Description Extractor
+Url Image Extractor
+Searx
+Searx Images
+Searx Videos
+Crypto Exchange Rates
+Translation
+Activity Graphs
+Join our MUC to see it in action and make it join yours! It’s free!
+
+However, it’s not open-source. 
+"""]
+interface = "Groupchat"
+url = "https://her.st/bot/"
+
 [[legal]]
 title = "Legal"
 subtitle = "Legal Notice"

@@ -15,6 +15,7 @@ from kaikout.xmpp.groupchat import XmppGroupchat
 from kaikout.xmpp.message import XmppMessage
 from kaikout.xmpp.moderation import XmppModeration
 from kaikout.xmpp.muc import XmppMuc
+from kaikout.xmpp.pubsub import XmppPubsub
 from kaikout.xmpp.status import XmppStatus
 import time
 
@@ -81,7 +82,7 @@ class XmppClient(slixmpp.ClientXMPP):
         self.add_event_handler("groupchat_direct_invite", self.on_groupchat_direct_invite) # XEP_0249
         self.add_event_handler("groupchat_invite", self.on_groupchat_invite) # XEP_0045
         self.add_event_handler("message", self.on_message)
-        # self.add_event_handler("reactions", self.on_reactions)
+        self.add_event_handler("reactions", self.on_reactions)
         # self.add_event_handler("room_activity", self.on_room_activity)
         # self.add_event_handler("session_resumed", self.on_session_resumed)
         self.add_event_handler("session_start", self.on_session_start)
@@ -197,9 +198,10 @@ class XmppClient(slixmpp.ClientXMPP):
                         if score > score_max:
                             if self.settings[room]['action']:
                                 jid_bare = await XmppCommands.outcast(self, room, alias, reason)
-                                # admins = await XmppMuc.get_affiliation(self, room, 'admin')
-                                # owners = await XmppMuc.get_affiliation(self, room, 'owner')
-                                moderators = await XmppMuc.get_role(self, room, 'moderator')
+                                # admins = await XmppMuc.get_affiliation_list(self, room, 'admin')
+                                # owners = await XmppMuc.get_affiliation_list(self, room, 'owner')
+                                moderators = await XmppMuc.get_role_list(
+                                    self, room, 'moderator')
                                 # Report to the moderators.
                                 message_to_moderators = (
                                     'Participant {} ({}) has been banned from '
@@ -250,13 +252,50 @@ class XmppClient(slixmpp.ClientXMPP):
                                         self, jid_bare, message_to_participant, 'chat')
 
 
+    async def on_muc_got_online(self, presence):
+        room = presence['muc']['room']
+        alias = presence['muc']['nick']
+        presence_body = 'User has joined to the groupchat.'
+        identifier = presence['id']
+        lang = presence['lang']
+        timestamp_iso = datetime.now().isoformat()
+        fields = ['message', timestamp_iso, alias, presence_body, lang, identifier]
+        filename = datetime.today().strftime('%Y-%m-%d') + '_' + room
+        Log.csv(filename, fields)
+        if (XmppMuc.is_moderator(self, room, self.alias) and
+            self.settings[room]['enabled']):
+            jid = presence['muc']['jid']
+            from hashlib import sha256
+            jid_to_sha256 = sha256(jid.bare.encode('utf-8')).hexdigest()
+            rtbl_jid_full = 'xmppbl.org'
+            rtbl_node_id = 'muc_bans_sha256'
+            rtbl_list = await XmppPubsub.get_items(self, rtbl_jid_full, rtbl_node_id)
+            for item in rtbl_list['pubsub']['items']:
+                if jid_to_sha256 == item['id']:
+                    reason = 'Jabber ID has been marked by RTBL.'
+                    await XmppCommands.devoice(self, room, alias, reason)
+                    break
+            # message_body = 'Greetings {} and welcome to groupchat {}'.format(alias, room)
+            # XmppMessage.send(self, jid.bare, message_body, 'chat')
+            # Send MUC-PM in case there is no indication for reception of 1:1
+            # jid_from = presence['from']
+            # XmppMessage.send(self, jid_from, message_body, 'chat')
+
+
     async def on_muc_presence(self, presence):
         alias = presence['muc']['nick']
         identifier = presence['id']
         jid_full = presence['muc']['jid']
         jid_bare = jid_full.bare
         lang = presence['lang']
-        presence_body = presence['status']
+        status_codes = presence['muc']['status_codes']
+        actor_alias = presence['muc']['item']['actor']['nick']
+        if 301 in status_codes:
+            presence_body = 'User has been banned by {}'.format(actor_alias)
+        elif 307 in status_codes:
+            presence_body = 'User has been kicked by {}'.format(actor_alias)
+        else:
+            presence_body = presence['status']
         room = presence['muc']['room']
         timestamp_iso = datetime.now().isoformat()
         fields = ['presence', timestamp_iso, alias, presence_body, lang, identifier]
@@ -267,10 +306,34 @@ class XmppClient(slixmpp.ClientXMPP):
         if (XmppMuc.is_moderator(self, room, self.alias) and
             self.settings[room]['enabled'] and
             alias != self.alias):
-            # import time # FIXME Why is this required if it is already stated at the top?
             timestamp = time.time()
             fields = [alias, presence_body, identifier, timestamp]
             Log.toml(self, room, fields, 'presence')
+            # Count bans and kicks
+            if self.settings[room]['check_moderation']:
+                status_codes = presence['muc']['status_codes']
+                if (301 in status_codes or 307 in status_codes):
+                    actor_jid_bare = presence['muc']['item']['actor']['jid'].bare
+                    actor_alias = presence['muc']['item']['actor']['nick']
+                    if 301 in status_codes:
+                        presence_body = 'User has been banned by {}'.format(actor_alias)
+                        XmppCommands.update_score_ban(self, room, actor_jid_bare, db_file)
+                    elif 307 in status_codes:
+                        presence_body = 'User has been kicked by {}'.format(actor_alias)
+                        XmppCommands.update_score_kick(self, room, actor_jid_bare, db_file)
+                    if 'score_ban' in self.settings[room] and actor_jid_bare in self.settings[room]['score_ban']:
+                        score_ban = self.settings[room]['score_ban'][actor_jid_bare]
+                    else:
+                        score_ban = 0
+                    if 'score_kick' in self.settings[room] and actor_jid_bare in self.settings[room]['score_kick']:
+                        score_kick = self.settings[room]['score_kick'][actor_jid_bare]
+                    else:
+                        score_kick = 0
+                    score_outcast = score_ban + score_kick
+                    if score_outcast > self.settings[room]['score_outcast']:
+                        reason = 'Moderation abuse has been triggered'
+                        await XmppMuc.set_affiliation(self, room, 'member', jid=actor_jid_bare, reason=reason)
+                        await XmppMuc.set_role(self, room, actor_alias, 'participant', reason)
             # Check for status message
             if self.settings[room]['check_status']:
                 reason, timer = XmppModeration.moderate_status_message(self, presence_body, room)
@@ -305,10 +368,12 @@ class XmppClient(slixmpp.ClientXMPP):
                     score = XmppCommands.raise_score(self, room, alias, db_file, reason)
                     if score > score_max:
                         if self.settings[room]['action']:
-                            jid_bare = await XmppCommands.outcast(self, room, alias, reason)
-                            # admins = await XmppMuc.get_affiliation(self, room, 'admin')
-                            # owners = await XmppMuc.get_affiliation(self, room, 'owner')
-                            moderators = await XmppMuc.get_role(self, room, 'moderator')
+                            jid_bare = await XmppCommands.outcast(
+                                self, room, alias, reason)
+                            # admins = await XmppMuc.get_affiliation_list(self, room, 'admin')
+                            # owners = await XmppMuc.get_affiliation_list(self, room, 'owner')
+                            moderators = await XmppMuc.get_role_list(
+                                self, room, 'moderator')
                             # Report to the moderators.
                             message_to_moderators = (
                                 'Participant {} ({}) has been banned from '
@@ -370,14 +435,27 @@ class XmppClient(slixmpp.ClientXMPP):
                                     self, jid_bare, message_to_participant, 'chat')
 
 
-    async def on_muc_self_presence(self, presence):
+    def on_muc_self_presence(self, presence):
         actor = presence['muc']['item']['actor']['nick']
         alias = presence['muc']['nick']
         room = presence['muc']['room']
         if actor and alias == self.alias: XmppStatus.send_status_message(self, room)
 
 
-    async def on_room_activity(self, presence):
+    def on_reactions(self, message):
+        reactions = message['reactions']['values']
+        alias = message['mucnick']
+        room = message['mucroom']
+        affiliation = XmppMuc.get_affiliation(self, room, alias)
+        if affiliation == 'member' and '👎' in reactions:
+            message_body = '{} {} has reacted to message {} with {}'.format(
+                affiliation, alias, message['id'], message['reactions']['plugin']['value'])
+            message.reply(message_body).send()
+            print(message_body)
+            print(room)
+
+
+    def on_room_activity(self, presence):
         print('on_room_activity')
         print(presence)
         print('testing mix core')
@@ -406,6 +484,7 @@ class XmppClient(slixmpp.ClientXMPP):
         # See also get_joined_rooms of slixmpp.plugins.xep_0045
         for room in rooms:
             XmppStatus.send_status_message(self, room)
+            self.add_event_handler("muc::%s::got_online" % room, self.on_muc_got_online)
             self.add_event_handler("muc::%s::presence" % room, self.on_muc_presence)
             self.add_event_handler("muc::%s::self-presence" % room, self.on_muc_self_presence)
         await asyncio.sleep(5)

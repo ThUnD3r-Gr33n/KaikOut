@@ -13,7 +13,7 @@ class XmppUtilities:
     
     async def is_jid_of_moderators(self, room, jid_full):
         # try:
-        moderators = await XmppMuc.get_role(self, room, 'moderator')
+        moderators = await XmppMuc.get_role_list(self, room, 'moderator')
         for alias in moderators:
             # Note: You might want to compare jid_bare
             if XmppMuc.get_full_jid(self, room, alias) == jid_full:
@@ -93,6 +93,26 @@ class XmppUtilities:
                 result = True
                 # operator_name = operator['name']
                 break
+        return result
+    
+    
+    def is_admin(self, room, alias):
+        """Check if given JID is an administrator"""
+        role = self.plugin['xep_0045'].get_jid_property(room, alias, 'affiliation')
+        if role == 'admin':
+            result = True
+        else:
+            result = False
+        return result
+    
+    
+    def is_owner(self, room, alias):
+        """Check if given JID is an owner"""
+        role = self.plugin['xep_0045'].get_jid_property(room, alias, 'affiliation')
+        if role == 'owner':
+            result = True
+        else:
+            result = False
         return result
     
     

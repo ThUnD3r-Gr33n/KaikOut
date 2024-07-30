@@ -60,69 +60,100 @@ class XmppChat:
             jid_full = jid.full
             room = self.sessions[jid_bare] if jid_bare in self.sessions else message_body
             status_mode,status_text, message_response = None, None, None
+            # Start a configuration session
             if '@' in room:
                 if room in XmppMuc.get_joined_rooms(self):
-                    alias = await XmppUtilities.is_jid_of_moderators(
-                        self, room, jid_full)
-                    if jid_bare not in self.sessions:
-                        if alias:
-                        # alias = XmppMuc.get_alias(self, room, jid)
-                        # if XmppUtilities.is_moderator(self, room, alias):
-                            self.sessions[jid_bare] = room
-                            message_response = (
-                                'A session to configure groupchat {} has been '
-                                'established.'.format(room))
-                            status_mode = 'chat'
-                            status_text = 'Session is opened: {}'.format(room)
-                            owners = await XmppMuc.get_affiliation(self, room,
-                                                                   'owner')
-                            for owner in owners:
+                    if XmppUtilities.is_moderator(self, room, self.alias):
+                        alias = await XmppUtilities.is_jid_of_moderators(
+                            self, room, jid_full)
+                        if jid_bare not in self.sessions:
+                            if alias:
+                            # alias = XmppMuc.get_alias(self, room, jid)
+                            # if XmppUtilities.is_moderator(self, room, alias):
+                                room_owners = await XmppMuc.get_affiliation_list(
+                                    self, room, 'owner')
+                                if not room_owners:
+                                    present_participants = XmppMuc.get_roster(self, room)
+                                    present_owners_alias = []
+                                    for participant in present_participants:
+                                        affiliation = XmppMuc.get_affiliation(
+                                            self, room, participant)
+                                        if affiliation == 'owner':
+                                            present_owners_alias.append(participant)
+                                    present_owners = []
+                                    for owner_alias in present_owners_alias:
+                                        owner_jid_full = XmppMuc.get_full_jid(self, room, owner_alias)
+                                        owner_jid_bare = owner_jid_full.split('/')[0]
+                                        present_owners.append(owner_jid_bare)
+                                    if not present_owners:
+                                        # present_moderators = await XmppMuc.get_role_list(
+                                        #     self, room, 'moderator')
+                                        # moderators = []
+                                        # [moderators.append(moderator) for moderator in present_moderators if moderator not in moderators]
+                                        room_admins = await XmppMuc.get_affiliation_list(
+                                            self, room, 'admin')
+                                # NOTE: Consideration, when there is no access
+                                # to the list of owners from groupchat configuration
+                                # then send a message to the groupchat - use alias
+                                # instead of a Jabber ID.
+                                jids_to_notify = room_owners or present_owners or room_admins
+                                self.sessions[jid_bare] = room
+                                message_response = (
+                                    'A session to configure groupchat {} has been '
+                                    'established.'.format(room))
+                                status_mode = 'chat'
+                                status_text = 'Session is opened: {}'.format(room)
+                                for jid in jids_to_notify:
+                                    message_notification = (
+                                        'A session for groupchat {} has been '
+                                        'activated by moderator {}'
+                                        .format(room, jid_bare))
+                                    XmppMessage.send(
+                                        self, jid, message_notification, 'chat')
+                            else:
+                                message_response = (
+                                    'You do not appear to be a moderator of '
+                                    'groupchat {}'.format(room))
+                                status_mode = 'available'
+                                status_text = (
+                                    'Type the desired groupchat - in which you '
+                                    'are a moderator at - to configure')
+                                moderators = await XmppMuc.get_role_list(
+                                    self, room, 'moderator')
                                 message_notification = (
-                                    'A session for groupchat {} has been '
-                                    'activated by moderator {}'
+                                    'An unauthorized attempt to establish a '
+                                    'session for groupchat {} has been made by {}'
                                     .format(room, jid_bare))
-                                XmppMessage.send(
-                                    self, owner, message_notification, 'chat')
-                        else:
+                                for moderator in moderators:
+                                    jid_full = XmppMuc.get_full_jid(self, room,
+                                                                    moderator)
+                                    XmppMessage.send(
+                                        self, jid_full, message_notification, 'chat')
+                        elif not alias:
+                            del self.sessions[jid_bare]
                             message_response = (
-                                'You do not appear to be a moderator of '
-                                'groupchat {}'.format(room))
-                            status_mode = 'available'
-                            status_text = (
-                                'Type the desired groupchat - in which you '
-                                'are a moderator at - to configure')
-                            moderators = await XmppMuc.get_role(
+                                'The session has been ended, because you are no '
+                                'longer a moderator at groupchat {}'.format(room))
+                            status_mode = 'away'
+                            status_text = 'Session is closed: {}'.format(room)
+                            moderators = await XmppMuc.get_role_list(
                                 self, room, 'moderator')
                             message_notification = (
-                                'An unauthorized attempt to establish a '
-                                'session for groupchat {} has been made by {}'
-                                .format(room, jid_bare))
+                                'The session for groupchat {} with former '
+                                'moderator {} has been terminated.\n'
+                                'A termination message has been sent to {}'
+                                .format(room, jid_bare, jid_bare))
                             for moderator in moderators:
                                 jid_full = XmppMuc.get_full_jid(self, room,
                                                                 moderator)
                                 XmppMessage.send(
                                     self, jid_full, message_notification, 'chat')
-                    elif not alias:
-                        del self.sessions[jid_bare]
-                        message_response = (
-                            'The session has been ended, because you are no '
-                            'longer a moderator at groupchat {}'.format(room))
-                        status_mode = 'away'
-                        status_text = 'Session is closed: {}'.format(room)
-                        moderators = await XmppMuc.get_role(
-                            self, room, 'moderator')
-                        message_notification = (
-                            'The session for groupchat {} with former '
-                            'moderator {} has been terminated.\n'
-                            'A termination message has been sent to {}'
-                            .format(room, jid_bare, jid_bare))
-                        for moderator in moderators:
-                            jid_full = XmppMuc.get_full_jid(self, room,
-                                                            moderator)
-                            XmppMessage.send(
-                                self, jid_full, message_notification, 'chat')
+                        else:
+                            room = self.sessions[jid_bare]
                     else:
-                        room = self.sessions[jid_bare]
+                        message_response = (
+                        'KaikOut must be a moderator at groupchat "{}".'
+                        .format(room))
                 else:
                     message_response = (
                         'Invite KaikOut to groupchat "{}" and try again.\n'
@@ -138,6 +169,8 @@ class XmppChat:
                 XmppMessage.send_reply(self, message, message_response)
                 return
         else:
+            print('AN UNKNOWN MESSAGE')
+            print(message)
             return
 
         db_file = Toml.instantiate(self, room)

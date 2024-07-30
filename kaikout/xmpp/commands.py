@@ -249,12 +249,12 @@ class XmppCommands:
     def print_statistics(db_file):
         """
         Print statistics.
-    
+
         Parameters
         ----------
         db_file : str
             Path to database file.
-    
+
         Returns
         -------
         msg : str
@@ -294,25 +294,27 @@ class XmppCommands:
     def print_version():
         message = __version__
         return message
-    
-    
+
+
     def raise_score(self, room, alias, db_file, reason):
         """
         Raise score by one.
-    
+
         Parameters
         ----------
-        db_file : str
-            Database filename.
+        room : str
+            Jabber ID.
         alias : str
             Alias.
+        db_file : str
+            Database filename.
         reason : str
             Reason.
-    
+
         Returns
         -------
         result.
-    
+
         """
         status_message = '✒️ Writing a score against {} for {}'.format(alias, reason)
         self.action_count += 1
@@ -331,23 +333,77 @@ class XmppCommands:
         XmppStatus.send_status_message(self, room)
         result = scores[jid_bare] if jid_full and jid_bare else 0
         return result
-    
-    
+
+
+    def update_score_ban(self, room, jid_bare, db_file):
+        """
+        Update ban score.
+
+        Parameters
+        ----------
+        room : str
+            Jabber ID.
+        jid_bare : str
+            Jabber ID.
+        db_file : str
+            Database filename.
+
+        Returns
+        -------
+        result.
+
+        """
+        scores = self.settings[room]['score_ban'] if 'score_ban' in self.settings[room] else {}
+        scores[jid_bare] = scores[jid_bare] + 1 if jid_bare in scores else 1
+        Toml.update_jid_settings(self, room, db_file, 'score_ban', scores)
+        # result = scores[jid_bare]
+        # return result
+
+
+    def update_score_kick(self, room, jid_bare, db_file):
+        """
+        Update kick score.
+
+        Parameters
+        ----------
+        room : str
+            Jabber ID.
+        jid_bare : str
+            Jabber ID.
+        db_file : str
+            Database filename.
+
+        Returns
+        -------
+        result.
+
+        """
+        scores = self.settings[room]['score_kick'] if 'score_kick' in self.settings[room] else {}
+        scores[jid_bare] = scores[jid_bare] + 1 if jid_bare in scores else 1
+        Toml.update_jid_settings(self, room, db_file, 'score_kick', scores)
+        # result = scores[jid_bare]
+        # return result
+
+
     def update_last_activity(self, room, jid_bare, db_file, timestamp):
         """
         Update last message activity.
-    
+
         Parameters
         ----------
+        room : str
+            Jabber ID.
         db_file : str
             Database filename.
         jid_bare : str
             Jabber ID.
-    
+        timestamp : 
+            Time stamp.
+
         Returns
         -------
         result.
-    
+
         """
         activity = self.settings[room]['last_activity'] if 'last_activity' in self.settings[room] else {}
         activity[jid_bare] = timestamp
