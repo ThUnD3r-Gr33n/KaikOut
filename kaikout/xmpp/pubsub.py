@@ -9,6 +9,7 @@ Functions create_node and create_entry are derived from project atomtopubsub.
 
 import hashlib
 from kaikout.log import Logger
+from slixmpp.exceptions import IqTimeout, IqError
 
 logger = Logger(__name__)
 
@@ -66,3 +67,16 @@ class XmppPubsub:
     async def get_items(self, jid, node):
         items = await self.plugin['xep_0060'].get_items(jid, node)
         return items
+
+
+    async def subscribe(self, jid, node):
+        result = await self['xep_0060'].subscribe(jid, node)
+        return result
+
+
+    async def get_node_subscriptions(self, jid, node):
+        try:
+            subscriptions = await self['xep_0060'].get_node_subscriptions(jid, node)
+            return subscriptions
+        except IqError as e:
+            print(e)

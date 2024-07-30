@@ -13,6 +13,7 @@ frequency_messages = 1   # The maximum allowed frequency (in seconds) of sent me
 frequency_presence = 180 # The maximum allowed frequency (in seconds) of changed status messages.
 inactivity_span = 30     # The maximum allowed time (in days) of inactivity.
 inactivity_warn = 300    # The time (in minutes) of inactivity to send a warning upon before action. Value can not be higher than of inactivity_span.
+rtbl_ignore = []         # A list of RTBL lists to exclude.
 score_messages = 3       # The maximum allowed number of message faults to act upon.
 score_presence = 10      # The maximum allowed number of presence faults to act upon.
 timer = 180              # Timer value (in seconds) for countdown before committing an action.

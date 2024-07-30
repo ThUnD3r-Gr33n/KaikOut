@@ -3,11 +3,10 @@
 
 import asyncio
 from datetime import datetime
-import slixmpp
 from kaikout.about import Documentation
 from kaikout.database import Toml
 from kaikout.log import Logger
-from kaikout.utilities import Config, Log
+from kaikout.utilities import Config, Log, BlockList
 from kaikout.xmpp.bookmark import XmppBookmark
 from kaikout.xmpp.chat import XmppChat
 from kaikout.xmpp.commands import XmppCommands
@@ -17,6 +16,7 @@ from kaikout.xmpp.moderation import XmppModeration
 from kaikout.xmpp.muc import XmppMuc
 from kaikout.xmpp.pubsub import XmppPubsub
 from kaikout.xmpp.status import XmppStatus
+import slixmpp
 import time
 
 # time_now = datetime.now()
@@ -53,10 +53,13 @@ class XmppClient(slixmpp.ClientXMPP):
         self.reconnect_timeout = Config.get_values('accounts.toml', 'xmpp')['settings']['reconnect_timeout']
         # A handler for operators.
         self.operators = Config.get_values('accounts.toml', 'xmpp')['operators']
-        # A handler for settings.
-        self.settings = {}
+        # A handler for blocklist.
+        #self.blocklist = {}
+        BlockList.load_blocklist(self)
         # A handler for sessions.
         self.sessions = {}
+        # A handler for settings.
+        self.settings = {}
         # A handler for tasks.
         self.tasks = {}
         # Register plugins.
@@ -267,14 +270,15 @@ class XmppClient(slixmpp.ClientXMPP):
             jid = presence['muc']['jid']
             from hashlib import sha256
             jid_to_sha256 = sha256(jid.bare.encode('utf-8')).hexdigest()
-            rtbl_jid_full = 'xmppbl.org'
-            rtbl_node_id = 'muc_bans_sha256'
-            rtbl_list = await XmppPubsub.get_items(self, rtbl_jid_full, rtbl_node_id)
-            for item in rtbl_list['pubsub']['items']:
-                if jid_to_sha256 == item['id']:
-                    reason = 'Jabber ID has been marked by RTBL.'
-                    await XmppCommands.devoice(self, room, alias, reason)
-                    break
+            for jid in self.blocklist['entries']:
+                if jid not in self.settings[room]['rtbl_ignore']:
+                    for node in self.blocklist['entries'][jid]:
+                        for item_id in self.blocklist['entries'][jid][node]:
+                            if jid_to_sha256 == item_id:
+                                reason = 'Jabber ID has been marked by RTBL: Publisher: {}; Node: {}.'.format(
+                                    jid, node)
+                                await XmppCommands.devoice(self, room, alias, reason)
+                                break
             # message_body = 'Greetings {} and welcome to groupchat {}'.format(alias, room)
             # XmppMessage.send(self, jid.bare, message_body, 'chat')
             # Send MUC-PM in case there is no indication for reception of 1:1
@@ -477,14 +481,32 @@ class XmppClient(slixmpp.ClientXMPP):
         """
         # self.command_list()
         # await self.get_roster()
-        subscriptions_of_node = await self['xep_0060'].get_node_subscriptions("xmppbl.org", "muc_bans_sha256")
-        print()
-        print('=== subscriptions_of_node ===')
-        print()
-        print(subscriptions_of_node)
-        print()
-        print('=== subscriptions_of_node ===')
-        print()
+        rtbl_sources = Config.get_values('rtbl.toml')['sources']
+        for source in rtbl_sources:
+            jabber_id = source['jabber_id']
+            node_id = source['node_id']
+            subscribe = await XmppPubsub.subscribe(self, jabber_id, node_id)
+            if subscribe['pubsub']['subscription']['subscription'] == 'subscribed':
+                rtbl_list = await XmppPubsub.get_items(self, jabber_id, node_id)
+                rtbl_items = rtbl_list['pubsub']['items']
+                for item in rtbl_items:
+                    exist = False
+                    item_id = item['id']
+                    for jid in self.blocklist['entries']:
+                        for node in jid:
+                            for item in node:
+                                if item_id == item:
+                                    exist = True
+                                    break
+                    if not exist:
+                        # TODO Extract items item_payload.find(namespace + 'title')
+                        # NOTE (Pdb)
+                        # for i in item['payload'].iter(): i.attrib
+                        # {'reason': 'urn:xmpp:reporting:abuse'}
+                        BlockList.add_entry_to_blocklist(self, jabber_id, node_id, item_id)
+#           subscribe['from'] = xmppbl.org
+#           subscribe['pubsub']['subscription']['node'] = 'muc_bans_sha256'
+            subscriptions = await XmppPubsub.get_node_subscriptions(self, jabber_id, node_id)
         await self['xep_0115'].update_caps()
         bookmarks = await XmppBookmark.get_bookmarks(self)
         print(bookmarks)

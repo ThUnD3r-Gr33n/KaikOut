@@ -1,6 +1,7 @@
 # This file lists default RTBL sources per database.
 # See file /usr/share/kaikout/rtbl.toml
 
-[[node]]
+[[sources]]
+description = "A general block list focussing on spam and service abuse."
 jabber_id = "xmppbl.org"
-node_name = "muc_bans_sha256"
+node_id = "muc_bans_sha256"

@@ -260,7 +260,7 @@ class XmppChat:
                 else:
                     response = str(self.settings[room]['action'])
             case _ if command_lowercase.startswith('allow +'):
-                value = command[7:]
+                value = command[7:].strip()
                 if value:
                     response = XmppCommands.set_filter(
                         self, room, db_file, value, 'allow', True)
@@ -268,7 +268,7 @@ class XmppChat:
                     response = ('No action has been taken.  '
                                 'Missing keywords.')
             case _ if command_lowercase.startswith('allow -'):
-                value = command[7:]
+                value = command[7:].strip()
                 if value:
                     response = XmppCommands.set_filter(
                         self, room, db_file, value, 'allow', False)
@@ -386,6 +386,22 @@ class XmppChat:
                     await XmppCommands.muc_leave(self, room)
                 else:
                     response = 'This command is valid in groupchat only.'
+            case _ if command_lowercase.startswith('ignore +'):
+                value = command[8:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'rtbl_ignore', True)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
+            case _ if command_lowercase.startswith('ignore -'):
+                value = command[8:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'rtbl_ignore', False)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
             case 'inactivity off':
                 XmppCommands.update_setting_value(
                     self, room, db_file, 'check_inactivity', 0)

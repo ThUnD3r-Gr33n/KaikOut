@@ -159,6 +159,14 @@ timer <number>
 Timer value (in seconds) for countdown before committing an action.
 """
 
+[rtbl]
+allow = """
+ignore [+|-] <keyword>
+Jabber IDs to ignore
+comma-separated keywords
+'+' appends to, '-' removes from.
+"""
+
 [statistics]
 score = """
 scores <jid>

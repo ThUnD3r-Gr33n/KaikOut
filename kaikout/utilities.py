@@ -199,6 +199,67 @@ class Log:
         with open(filename, 'w') as f: f.write(content)
 
 
+class BlockList:
+
+
+    def get_filename():
+        """
+        Get pathname of filename.
+        If filename does not exist, create it.
+
+        Parameters
+        ----------
+        None.
+    
+        Returns
+        -------
+        filename : str
+            Pathname.
+        """
+        data_dir = Config.get_default_data_directory()
+        if not os.path.isdir(data_dir): os.mkdir(data_dir)
+        filename = os.path.join(data_dir, r"blocklist.toml")
+        if not os.path.exists(filename):
+            data = {'entries' : {}}
+            content = tomli_w.dumps(data)
+            with open(filename, 'w') as f: f.write(content)
+        return filename
+
+
+    def load_blocklist(self):
+        filename = BlockList.get_filename()
+        with open(filename, 'rb') as f:
+            self.blocklist = tomllib.load(f)
+
+
+    def add_entry_to_blocklist(self, jabber_id, node_id, item_id):
+        """
+        Update blocklist file.
+
+        Parameters
+        ----------
+        jabber_id : str
+            Jabber ID.
+        node_id : str
+            Node name.
+        item_id : str
+            Item ID.
+    
+        Returns
+        -------
+        None.
+        """
+        if jabber_id not in self.blocklist['entries']:
+            self.blocklist['entries'][jabber_id] = {}
+        if node_id not in self.blocklist['entries'][jabber_id]:
+            self.blocklist['entries'][jabber_id][node_id] = []
+        self.blocklist['entries'][jabber_id][node_id].append(item_id)
+        data = self.blocklist
+        content = tomli_w.dumps(data)
+        filename = BlockList.get_filename()
+        with open(filename, 'w') as f: f.write(content)
+
+
 class Url:
 
 
