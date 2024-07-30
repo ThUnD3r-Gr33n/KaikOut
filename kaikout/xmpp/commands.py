@@ -451,12 +451,14 @@ class XmppCommands:
         new_keywords = keywords.split(',')
         processed_keywords = []
         if axis:
+            action = 'added'
             for keyword in new_keywords:
                 if keyword and keyword not in keyword_list:
                     keyword_trim = keyword.strip()
                     keyword_list.append(keyword_trim)
                     processed_keywords.append(keyword_trim)
         else:
+            action = 'removed'
             for keyword in new_keywords:
                 if keyword and keyword in keyword_list:
                     keyword_trim = keyword.strip()
@@ -464,7 +466,8 @@ class XmppCommands:
                     processed_keywords.append(keyword_trim)
         Toml.update_jid_settings(self, room, db_file, filter, keyword_list)
         processed_keywords.sort()
-        message = 'Keywords "{}" have been added to list "{}".'.format(', '.join(processed_keywords), filter)
+        message = 'Keywords "{}" have been {} to list "{}".'.format(
+            ', '.join(processed_keywords), action, filter)
         return message
 
 

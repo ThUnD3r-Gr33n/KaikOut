@@ -5,6 +5,7 @@
 action = 0               # 1 to ban, or 0 to devioce.
 check_inactivity = 0     # Enable inactivity detection.
 check_message = 1        # Enable detection of message abuse.
+check_moderation = 0     # Enable moderation abuse detection.
 check_status = 1         # Enable detection of status message abuse.
 count = 9                # The maximum allowed number of instances of a word or a phrase in a message.
 enabled = 1              # Work status (Value 0 to disable).
@@ -15,6 +16,7 @@ inactivity_span = 30     # The maximum allowed time (in days) of inactivity.
 inactivity_warn = 300    # The time (in minutes) of inactivity to send a warning upon before action. Value can not be higher than of inactivity_span.
 rtbl_ignore = []         # A list of RTBL lists to exclude.
 score_messages = 3       # The maximum allowed number of message faults to act upon.
+score_outcast = 10       # The maximum allowed number of ban and kick actions.
 score_presence = 10      # The maximum allowed number of presence faults to act upon.
 timer = 180              # Timer value (in seconds) for countdown before committing an action.
 allow = [
