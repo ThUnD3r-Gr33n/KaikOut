@@ -488,15 +488,15 @@ class XmppCommands:
         return message
 
 
-    def set_filter(self, room, db_file, keywords, filter, axis):
+    def set_filter(self, room, db_file, strings, filter, axis):
         """
 
         Parameters
         ----------
         db_file : str
             Database filename.
-        keywords : str
-            keyword (word or phrase).
+        strings : str
+            string (word or phrase).
         filter : str
             'allow' or 'deny'.
         axis : boolean
@@ -507,27 +507,31 @@ class XmppCommands:
         None.
 
         """
-        keyword_list = self.settings[room][filter] if filter in self.settings[room] else []
-        new_keywords = keywords.split(',')
-        processed_keywords = []
+        string_list = self.settings[room][filter] if filter in self.settings[room] else []
+        new_strings = strings.split(',')
+        processed_strings = []
         if axis:
-            action = 'added'
-            for keyword in new_keywords:
-                if keyword and keyword not in keyword_list:
-                    keyword_trim = keyword.strip()
-                    keyword_list.append(keyword_trim)
-                    processed_keywords.append(keyword_trim)
+            action = 'added to'
+            for string in new_strings:
+                if string and string not in string_list:
+                    string_trim = string.strip()
+                    string_list.append(string_trim)
+                    processed_strings.append(string_trim)
         else:
-            action = 'removed'
-            for keyword in new_keywords:
-                if keyword and keyword in keyword_list:
-                    keyword_trim = keyword.strip()
-                    keyword_list.remove(keyword_trim)
-                    processed_keywords.append(keyword_trim)
-        Toml.update_jid_settings(self, room, db_file, filter, keyword_list)
-        processed_keywords.sort()
-        message = 'Keywords "{}" have been {} to list "{}".'.format(
-            ', '.join(processed_keywords), action, filter)
+            action = 'removed from'
+            for string in new_strings:
+                if string and string in string_list:
+                    string_trim = string.strip()
+                    string_list.remove(string_trim)
+                    processed_strings.append(string_trim)
+        Toml.update_jid_settings(self, room, db_file, filter, string_list)
+        processed_strings.sort()
+        if processed_strings:
+            message = 'Strings "{}" have been {} list "{}".'.format(
+                ', '.join(processed_strings), action, filter)
+        else:
+            message = 'Strings "{}" were already {} list "{}".'.format(
+                strings, action, filter)
         return message
 
 

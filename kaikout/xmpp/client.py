@@ -245,18 +245,17 @@ class XmppClient(slixmpp.ClientXMPP):
         db_file = Toml.instantiate(self, room)
         if (XmppMuc.is_moderator(self, room, self.alias) and
             self.settings[room]['enabled'] and
-            alias != self.alias and
-            jid_bare and
-            jid_bare not in self.settings[room]['jid_whitelist']):
+            alias != self.alias):
             timestamp = time.time()
             fields = [alias, presence_body, identifier, timestamp]
             Log.toml(self, room, fields, 'presence')
             # Count bans and kicks
             await XmppObservation.observe_strikes(self, db_file, presence, room)
-            # Check for status message
-            await XmppObservation.observe_status_message(self, alias, db_file, jid_bare, presence_body, room)
-            # Check for inactivity
-            await XmppObservation.observe_inactivity(self, db_file, room)
+            if jid_bare and jid_bare not in self.settings[room]['jid_whitelist']:
+                # Check for status message
+                await XmppObservation.observe_status_message(self, alias, db_file, jid_bare, presence_body, room)
+                # Check for inactivity
+                await XmppObservation.observe_inactivity(self, db_file, room)
 
 
     def on_muc_self_presence(self, presence):

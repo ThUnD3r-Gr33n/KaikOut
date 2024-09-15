@@ -503,11 +503,14 @@ class XmppChat:
             case _ if command_lowercase.startswith('scores reset'):
                 jid_bare = command[12:].strip()
                 if jid_bare:
-                    del self.settings[room]['scores'][jid_bare]
-                    value = self.settings[room]['scores']
-                    XmppCommands.update_setting_value(
-                        self, room, db_file, 'scores', value)
-                    response = 'Score for {} has been reset'.format(jid_bare)
+                    if jid_bare in self.settings[room]['scores']:
+                        del self.settings[room]['scores'][jid_bare]
+                        value = self.settings[room]['scores']
+                        XmppCommands.update_setting_value(
+                            self, room, db_file, 'scores', value)
+                        response = 'Score for {} has been reset'.format(jid_bare)
+                    else:
+                        response = 'Jabber ID {} is not known.'.format(jid_bare)
                 else:
                     XmppCommands.update_setting_value(
                         self, room, db_file, 'scores', {})
@@ -515,7 +518,10 @@ class XmppChat:
             case _ if command_lowercase.startswith('scores'):
                 jid_bare = command[6:].strip()
                 if jid_bare:
-                    response = str(self.settings[room]['scores'][jid_bare])
+                    if jid_bare in self.settings[room]['scores']:
+                        response = str(self.settings[room]['scores'][jid_bare])
+                    else:
+                        response = 'Jabber ID {} is not known.'.format(jid_bare)
                 else:
                     response = str(self.settings[room]['scores'])
             case 'start':
