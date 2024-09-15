@@ -194,6 +194,22 @@ class XmppChat:
 
         response = None
         match command_lowercase:
+            case _ if command_lowercase.startswith('blacklist +'):
+                value = command[11:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'jid_blacklist', True)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
+            case _ if command_lowercase.startswith('blacklist -'):
+                value = command[11:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'jid_blacklist', False)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
             case 'help':
                 command_list = XmppCommands.print_help()
                 response = ('Available command keys:\n'
@@ -539,6 +555,22 @@ class XmppChat:
                     response = str(self.settings[room]['timer'])
             case 'version':
                 response = XmppCommands.print_version()
+            case _ if command_lowercase.startswith('whitelist +'):
+                value = command[11:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'jid_whitelist', True)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
+            case _ if command_lowercase.startswith('whitelist -'):
+                value = command[11:].strip()
+                if value:
+                    response = XmppCommands.set_filter(
+                        self, room, db_file, value, 'jid_whitelist', False)
+                else:
+                    response = ('No action has been taken.  '
+                                'Missing Jabber IDs.')
             case _ if command_lowercase.startswith('xmpp:'):
                 response = await XmppCommands.muc_join(self, command)
             case _:

@@ -51,6 +51,20 @@ goodbye
 Leave groupchat and delete it from bookmarks.
 """
 
+[list]
+blacklist = """
+blacklist [+|-] <keyword>
+Jabber IDs to blacklist
+comma-separated keywords
+'+' appends to, '-' removes from.
+"""
+whitelist = """
+whitelist [+|-] <keyword>
+Jabber IDs to whitelist
+comma-separated keywords
+'+' appends to, '-' removes from.
+"""
+
 [manual]
 all = """
 help all
