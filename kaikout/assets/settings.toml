@@ -9,6 +9,8 @@ check_moderation = 0     # Enable moderation abuse detection.
 check_status = 1         # Enable detection of status message abuse.
 count = 9                # The maximum allowed number of instances of a word or a phrase in a message.
 enabled = 1              # Work status (Value 0 to disable).
+jid_blacklist = []       # A list of JIDs to blacklist.
+jid_whitelist = []       # A list of JIDs to whitelist.
 finished = 0             # Send an extra message which indicates of the amount of time of a done task (Value 1 to enable).
 frequency_messages = 1   # The maximum allowed frequency (in seconds) of sent messages.
 frequency_presence = 180 # The maximum allowed frequency (in seconds) of changed status messages.
@@ -74,6 +76,10 @@ deny = [
   "son of a whore",
   "wanker"
 ]
+
+[[rtbl]]
+jid = 'xmppbl.org'
+node = 'muc_bans_sha256'
 
 [ipc]
 bsd = 0 # IPC (BSD/UDS) POSIX sockets
