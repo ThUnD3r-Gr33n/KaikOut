@@ -47,16 +47,20 @@ class XmppChat:
         # Process commands.
         message_type = message['type']
         message_body = message['body']
+        jid = message['from']
+        jid_bare = jid.bare
         if message_type == 'groupchat':
             alias = message['mucnick']
             room = message['mucroom']
+            alias_of_kaikout = XmppUtilities.get_self_alias(self, jid_bare)
             if (message['mucnick'] == self.alias or
                 not XmppUtilities.is_moderator(self, room, alias) or
-                not message_body.startswith('%')):
+                not message_body.startswith(alias_of_kaikout)):
                 return
+            alias_of_kaikout_length = len(alias_of_kaikout) + 1
+            command = message_body[alias_of_kaikout_length:].lstrip()
         elif message_type in ('chat', 'normal'):
-            jid = message['from']
-            jid_bare = jid.bare
+            command = message_body
             jid_full = jid.full
             room = self.sessions[jid_bare] if jid_bare in self.sessions else message_body
             status_mode,status_text, message_response = None, None, None
@@ -185,7 +189,6 @@ class XmppChat:
 
         command_time_start = time.time()
 
-        command = message_body[1:] if message_type == 'groupchat' else message_body
         command_lowercase = command.lower()
 
         # if not self.settings[room]['enabled']:
